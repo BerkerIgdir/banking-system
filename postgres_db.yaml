@@ -1,0 +1,17 @@
+version: '3.7'
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_DB=bank"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=admin"
