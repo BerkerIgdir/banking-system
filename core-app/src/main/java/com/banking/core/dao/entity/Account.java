@@ -16,8 +16,8 @@ public class Account {
     private String name;
     private String surname;
     private String IBAN;
-    @Column(name = "country_id")
-    private UUID country;
+    @Column(name = "country_code")
+    private String country;
     private BigDecimal balance;
     public Account(){}
     public UUID getUuid() {
@@ -32,7 +32,7 @@ public class Account {
         this.name = name;
     }
 
-    public Account(UUID uuid, String name, String surname, String IBAN, UUID country, BigDecimal balance) {
+    public Account(UUID uuid, String name, String surname, String IBAN, String country, BigDecimal balance) {
         this.id = uuid;
         this.name = name;
         this.surname = surname;
@@ -49,7 +49,7 @@ public class Account {
         this.IBAN = IBAN;
     }
 
-    public void setCountry(UUID country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
@@ -69,11 +69,30 @@ public class Account {
         return IBAN;
     }
 
-    public UUID getCountry() {
+    public String getCountry() {
         return country;
     }
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(Account.class);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Account a) {
+            return a.id.equals(this.id);
+        }
+        return false;
     }
 }

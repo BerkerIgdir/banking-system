@@ -55,4 +55,23 @@ public class Country {
         return currency;
     }
 
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(Country.class);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Country c) {
+            return c.id.equals(this.id);
+        }
+        return false;
+    }
+
 }

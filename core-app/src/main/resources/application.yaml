@@ -1,7 +1,7 @@
 spring:
   jpa:
     open-in-view: false
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
     properties:
       hibernate:
@@ -21,4 +21,4 @@ spring:
       schema-locations: classpath:init-schema.sql
       platform: postgres
       data-locations: classpath:init-data.sql
-      mode: always
+      mode: never

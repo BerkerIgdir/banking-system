@@ -1,5 +1,7 @@
 package com.banking.core.dao.entity;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,7 +14,7 @@ import java.util.UUID;
 @Table(name = "transactions")
 public class Transaction {
     @Id
-    private UUID uuid;
+    private UUID id;
     @Column(name = "trans_time")
     private LocalDateTime time;
     @Column(name = "from_account")
@@ -20,23 +22,24 @@ public class Transaction {
     @Column(name = "to_account")
     private UUID toAccount;
 
-    @Column(name = "country_id")
-    private UUID countryId;
+    @Column(name = "country_code")
+    private String countryId;
     private BigDecimal amount;
 
     public Transaction() {
     }
 
-    public Transaction(UUID uuid, LocalDateTime time, UUID fromAccount, UUID toAccount, BigDecimal amount) {
-        this.uuid = uuid;
+    public Transaction(UUID uuid, LocalDateTime time, UUID fromAccount, UUID toAccount, BigDecimal amount,String countryId) {
+        this.id = uuid;
         this.time = time;
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.amount = amount;
+        this.countryId = countryId;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(UUID uuid) {
+        this.id = uuid;
     }
 
     public void setTime(LocalDateTime time) {
@@ -55,8 +58,8 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
     public LocalDateTime getTime() {
@@ -75,12 +78,31 @@ public class Transaction {
         return amount;
     }
 
-    public UUID getCountryId() {
+    public String getCountryId() {
         return countryId;
     }
 
-    public void setCountryId(UUID countryId) {
+    public void setCountryId(String countryId) {
         this.countryId = countryId;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(Transaction.class);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Transaction t) {
+            return t.getId().equals(this.id);
+        }
+        return false;
     }
 
 }

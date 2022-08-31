@@ -22,6 +22,7 @@ CREATE TABLE public.accounts
     name       character varying COLLATE pg_catalog."default",
     surname    character varying COLLATE pg_catalog."default",
     country_code character varying COLLATE pg_catalog."default" NOT NULL,
+    balance numeric(12,4) default 0,
     CONSTRAINT country_fk FOREIGN KEY (country_code)
         REFERENCES public.countries (code) MATCH SIMPLE
         ON UPDATE NO ACTION
