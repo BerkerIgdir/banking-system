@@ -1,9 +1,6 @@
 package com.banking.core.dao.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -19,6 +16,8 @@ public class Account {
     @Column(name = "country_code")
     private String country;
     private BigDecimal balance;
+    @Version
+    private int version;
     public Account(){}
     public UUID getUuid() {
         return id;
@@ -75,6 +74,14 @@ public class Account {
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Override

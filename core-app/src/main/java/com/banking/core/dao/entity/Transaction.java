@@ -2,10 +2,7 @@ package com.banking.core.dao.entity;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,6 +22,17 @@ public class Transaction {
     @Column(name = "country_code")
     private String countryId;
     private BigDecimal amount;
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Version
+    private int version;
 
     public Transaction() {
     }

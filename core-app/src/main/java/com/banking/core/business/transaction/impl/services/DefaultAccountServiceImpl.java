@@ -1,11 +1,13 @@
-package com.banking.core.business.transaction.impl;
+package com.banking.core.business.transaction.impl.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
 import com.banking.core.business.transaction.TransactionService;
-import com.banking.core.dao.entity.Account;
 import com.banking.core.dao.entity.Transaction;
 import com.banking.core.dao.repo.AccountRepository;
 import com.banking.core.dao.repo.TransactionsRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Qualifier(value = "default-transaction-service")
 @Transactional(readOnly = true)
 public class DefaultAccountServiceImpl implements TransactionService {
+
+    private final static Logger LOG = LoggerFactory.getLogger(DefaultAccountServiceImpl.class);
     private final AccountRepository accountRepository;
     private final TransactionsRepo transactionsRepo;
 
@@ -27,42 +32,38 @@ public class DefaultAccountServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) {
         var fromAcc = accountRepository.findAccountByIBAN(fromIBAN).orElseThrow(AccountNotFoundException::new);
         var toAcc = accountRepository.findAccountByIBAN(toIBAN).orElseThrow(AccountNotFoundException::new);
 
-        System.out.println(Thread.currentThread() + " Beginning balance of from account is: " + fromAcc.getBalance());
-        System.out.println(Thread.currentThread() + "Beginning balance of to account is: " + toAcc.getBalance());
+        LOG.info("Beginning balance of from account is: " + fromAcc.getBalance());
+        LOG.info("Beginning balance of to account is: " + toAcc.getBalance());
 
         if (fromAcc.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException(Thread.currentThread().getName() + " NOT ENOUGH BALANCE!");
         }
-        var newFromBalance = accountRepository.findAccountByIBAN(fromIBAN).map(Account::getBalance).map(blnc -> blnc.subtract(amount)).orElseThrow();
-        fromAcc.setBalance(new BigDecimal(accountRepository.getBalance(fromIBAN)));
-        var newToBalance = accountRepository.findAccountByIBAN(toIBAN).map(Account::getBalance).map(blnc -> blnc.add(amount)).orElseThrow();
-        var newToBalanceSql = accountRepository.getBalance(toIBAN);
-        toAcc.setBalance(new BigDecimal(newToBalanceSql));
+        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
+        toAcc.setBalance(toAcc.getBalance().add(amount));
         var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromAcc.getUuid(), toAcc.getUuid(), amount, fromAcc.getCountry());
         transactionsRepo.save(transactionToPersist);
     }
-    @Transactional
-    public boolean transfer(
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void beginTransaction(
             String fromIban, String toIban, long cents) {
-        boolean status = true;
 
         long fromBalance = accountRepository.getBalance(fromIban);
-        System.out.println(Thread.currentThread() + " Beginning balance of from account is: " + fromBalance);
-        if(fromBalance >= cents) {
-            status &= accountRepository.addBalance(
+        LOG.info("Beginning balance of from account is: " + fromBalance);
+
+        if (fromBalance >= cents) {
+            accountRepository.addBalance(
                     fromIban, (-1) * cents
-            ) > 0;
+            );
 
-            status &= accountRepository.addBalance(
+            accountRepository.addBalance(
                     toIban, cents
-            ) > 0;
+            );
         }
-
-        return status;
     }
 }

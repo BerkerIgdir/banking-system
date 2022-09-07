@@ -21,7 +21,7 @@ spring:
       schema-locations: classpath:init-schema.sql
       platform: postgres
       data-locations: classpath:init-data.sql
-      mode: never
+      mode: always
 
 retry-config:
   initial-interval-ms: 1000

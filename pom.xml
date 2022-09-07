@@ -11,6 +11,7 @@
     <modules>
         <module>core-app</module>
         <module>config-data</module>
+        <module>common-bean</module>
     </modules>
 
     <properties>
@@ -18,6 +19,9 @@
         <java.version>17</java.version>
         <spring-boot.version>2.7.1</spring-boot.version>
         <postgresql.version>42.3.5</postgresql.version>
+        <spring-retry.version>1.3.3</spring-retry.version>
+        <spring-aspect.version>5.3.22</spring-aspect.version>
+        <jackson-mapper.version>2.12.0</jackson-mapper.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -41,6 +45,34 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.retry/spring-retry -->
+            <dependency>
+                <groupId>org.springframework.retry</groupId>
+                <artifactId>spring-retry</artifactId>
+                <version>${spring-retry.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring-aspect.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.example</groupId>
+                <artifactId>config-data</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.example</groupId>
+                <artifactId>common-bean</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-mapper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

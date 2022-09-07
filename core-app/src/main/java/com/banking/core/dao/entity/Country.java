@@ -3,6 +3,7 @@ package com.banking.core.dao.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.util.UUID;
 
 @Entity
@@ -54,6 +55,17 @@ public class Country {
     public String getCurrency() {
         return currency;
     }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Version
+    private int version;
 
     @Override
     public int hashCode() {
