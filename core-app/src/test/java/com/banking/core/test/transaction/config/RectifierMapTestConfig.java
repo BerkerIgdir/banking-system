@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Configuration
-@ConfigurationProperties(prefix = "valuemap")
+@ConfigurationProperties(prefix = "rectifier-config")
 @PropertySource(value = "classpath:country-code-rectifier.yaml")
 public class RectifierMapTestConfig {
     private Map<String, List<String>> rectifierMap;

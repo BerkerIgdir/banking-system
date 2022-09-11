@@ -36,7 +36,7 @@ retry-config:
   sleep-time-ms: 2000
 
 
-valuemap:
+value-map:
   map:
     TR:
       - TR

@@ -1,10 +1,11 @@
-valuemap:
-  TR:
-    - TR
-    - TUR
-    - Turkey
-    - Turkiye
-  DE:
-    - DE
-    - Germany
-    - Deutschland
+value-map:
+  rectifier-map:
+    TR:
+      - TR
+      - TUR
+      - Turkey
+      - Turkiye
+    DE:
+      - DE
+      - Germany
+      - Deutschland
