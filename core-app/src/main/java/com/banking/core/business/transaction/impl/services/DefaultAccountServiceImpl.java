@@ -2,8 +2,9 @@ package com.banking.core.business.transaction.impl.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
 import com.banking.core.business.transaction.TransactionService;
+import com.banking.core.dao.entity.Account;
 import com.banking.core.dao.entity.Transaction;
-import com.banking.core.dao.repo.AccountRepository;
+import com.banking.core.dao.repo.AccountTransactionRepository;
 import com.banking.core.dao.repo.TransactionsRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,10 @@ import java.util.UUID;
 public class DefaultAccountServiceImpl implements TransactionService {
 
     private final static Logger LOG = LoggerFactory.getLogger(DefaultAccountServiceImpl.class);
-    private final AccountRepository accountRepository;
+    private final AccountTransactionRepository<Account> accountRepository;
     private final TransactionsRepo transactionsRepo;
 
-    public DefaultAccountServiceImpl(AccountRepository repository, TransactionsRepo transactionsRepo) {
+    public DefaultAccountServiceImpl( AccountTransactionRepository<Account> repository, TransactionsRepo transactionsRepo) {
         this.accountRepository = repository;
         this.transactionsRepo = transactionsRepo;
     }
@@ -43,6 +44,7 @@ public class DefaultAccountServiceImpl implements TransactionService {
         if (fromAcc.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException(Thread.currentThread().getName() + " NOT ENOUGH BALANCE!");
         }
+
         fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
         toAcc.setBalance(toAcc.getBalance().add(amount));
         var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromAcc.getUuid(), toAcc.getUuid(), amount, fromAcc.getCountry());

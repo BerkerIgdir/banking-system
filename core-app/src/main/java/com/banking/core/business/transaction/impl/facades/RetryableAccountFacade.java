@@ -21,6 +21,7 @@ public class RetryableAccountFacade implements TransactionService {
     private final RetryConfigProperties retryConfigProperties;
     private final TransactionService transactionService;
 
+
     public RetryableAccountFacade(RetryTemplate retryTemplate,
                                   RetryConfigProperties retryConfigProperties,
                                   @Qualifier(value = "default-transaction-service") TransactionService transactionService) {
@@ -30,19 +31,24 @@ public class RetryableAccountFacade implements TransactionService {
     }
 
     @Override
-    public void beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) {
+    public void beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) throws InterruptedException {
         LOG.info("Retryable transaction is beginning...");
         int currentRetryCount = 1;
+        long sleepDuration = 1L;
+        double multiplier = retryConfigProperties.getMultiplier();
         while (!retryTemplate.execute(retryContext -> retryTransaction(retryContext, fromIBAN, toIBAN, amount))) {
-            LOG.info("Current retry count is: " + currentRetryCount++);
+
             if (currentRetryCount > retryConfigProperties.getMaxAttempts()) {
                 throw new MaxTransactionsAttemptException();
             }
+            sleepDuration += (sleepDuration * multiplier);
+            Thread.sleep(sleepDuration);
         }
     }
 
     private boolean retryTransaction(RetryContext context, String fromIBAN, String toIBAN, BigDecimal amount) {
         try {
+            LOG.info("Current retry count is: " + context.getRetryCount());
             transactionService.beginTransaction(fromIBAN, toIBAN, amount);
             return true;
         } catch (Exception e) {

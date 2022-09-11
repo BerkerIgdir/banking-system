@@ -1,4 +1,9 @@
 spring:
+  profiles:
+    active: "test"
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   jpa:
     open-in-view: false
     show-sql: false
@@ -29,3 +34,16 @@ retry-config:
   multiplier: 2.0
   maxAttempts: 5
   sleep-time-ms: 2000
+
+
+valuemap:
+  map:
+    TR:
+      - TR
+      - TUR
+      - Turkey
+      - Turkiye
+    DE:
+      - DE
+      - Germany
+      - Deutschland

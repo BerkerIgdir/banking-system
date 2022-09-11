@@ -1,5 +1,6 @@
 package com.banking.core.dao.entity;
 
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;

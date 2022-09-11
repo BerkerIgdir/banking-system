@@ -4,6 +4,7 @@ CREATE TABLE public.countries
 (
     id        uuid NOT NULL UNIQUE,
     code character varying COLLATE  pg_catalog."default" UNIQUE NOT NULL,
+    alpha3_code character varying COLLATE  pg_catalog."default" UNIQUE NOT NULL,
     version integer default 0,
     name      character varying COLLATE pg_catalog."default",
     time_zone character varying COLLATE pg_catalog."default",
@@ -19,7 +20,7 @@ DROP TABLE IF EXISTS public.accounts CASCADE;
 CREATE TABLE public.accounts
 (
     id         uuid NOT NULL UNIQUE ,
-     version integer default 0,
+    version integer default 0,
     IBAN       character varying COLLATE pg_catalog."default",
     name       character varying COLLATE pg_catalog."default",
     surname    character varying COLLATE pg_catalog."default",
@@ -40,7 +41,7 @@ DROP TABLE IF EXISTS public.transactions CASCADE;
 CREATE TABLE public.transactions
 (
     id uuid NOT NULL UNIQUE,
-     version integer default 0,
+    version integer default 0,
     to_account     uuid NOT NULL,
     from_account   uuid NOT NULL,
     country_code character varying COLLATE pg_catalog."default" NOT NULL,

@@ -1,0 +1,11 @@
+rectifier-config:
+  rectifier-map:
+    TR:
+      - TR
+      - TUR
+      - Turkey
+      - Turkiye
+    DE:
+      - DE
+      - Germany
+      - Deutschland
