@@ -8,9 +8,16 @@ import java.math.BigDecimal;
 
 public interface AccountCrudDTO {
 
-    record AccountCrudRequestDto(@JsonProperty("name") @NotEmpty @NotNull String name,
-                                 @JsonProperty("surname") @NotEmpty @NotNull String surname,
-                                 @JsonProperty("country") @NotEmpty @NotNull String country) {
+    record AccountCreateRequestDto(@JsonProperty("name") @NotEmpty @NotNull String name,
+                                   @JsonProperty("surname") @NotEmpty @NotNull String surname,
+                                   @JsonProperty("country") @NotEmpty @NotNull String country) {
+    }
+
+    record AccountUpdateRequestDto(@JsonProperty("IBAN") @NotEmpty @NotNull String iban,
+                                   @JsonProperty("name") String name,
+                                   @JsonProperty("surname") String surname,
+                                   @JsonProperty("country") String country,
+                                   @JsonProperty("balance") BigDecimal balance) {
     }
 
     record AccountCrudResponseDto(@JsonProperty("name") String name,

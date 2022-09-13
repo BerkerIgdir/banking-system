@@ -3,6 +3,7 @@ package com.banking.core.controller.crud;
 import com.banking.core.business.crud.AccountCrudService;
 import com.banking.core.business.crud.dto.AccountCrudDTO;
 import com.banking.core.dao.entity.Account;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,21 +26,48 @@ public class AccountCrudRestController {
     }
 
     @GetMapping("/country/{countryCode}")
-    ResponseEntity<List<Account>> getAllAccounts(@PathVariable @NotEmpty String countryCode) {
+    @ApiOperation(value = "Gets user list",
+            notes = "This endpoint lists all accounts by country")
+    public ResponseEntity<List<Account>> getAllAccounts(@PathVariable @NotEmpty String countryCode) {
         return ResponseEntity.ok(accountCrudService.retrieveAccountsByCountryCode(countryCode));
     }
 
     @GetMapping(IBAN_END_POINT)
-    ResponseEntity<Account> getAccountByIban(@PathVariable() String iban) {
+    @ApiOperation(value = "Gets specific user",
+            notes = "This method brings an unique user by iban")
+    public ResponseEntity<Account> getAccountByIban(@PathVariable String iban) {
         return ResponseEntity.ok(accountCrudService.retrieveAccountByIban(iban));
     }
 
-
     @PostMapping
-    ResponseEntity<URI> createNewAccount(@RequestBody @Valid AccountCrudDTO.AccountCrudRequestDto requestDto) {
+    @ApiOperation(value = "Create user",
+            notes = "This method creates a new user")
+    public ResponseEntity<URI> createNewAccount(@RequestBody @Valid AccountCrudDTO.AccountCreateRequestDto requestDto) {
         var iban = accountCrudService.create(requestDto);
-        var uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path(IBAN_END_POINT).buildAndExpand(iban);
-        return ResponseEntity.created(uri.toUri()).build();
+        return ResponseEntity.created(getUriToAccount(iban)).build();
+    }
+
+    @PutMapping
+    @ApiOperation(value = "Updates users country",
+            notes = "This method updates an existing user")
+    public ResponseEntity<URI> updateAccount(@RequestBody @Valid AccountCrudDTO.AccountUpdateRequestDto requestDto) {
+        var iban = accountCrudService.update(requestDto);
+        return ResponseEntity.created(getUriToAccount(iban)).build();
+    }
+
+    @DeleteMapping(IBAN_END_POINT)
+    @ApiOperation(value = "Deletes user",
+            notes = "This method deletes an existing user by iban")
+    public ResponseEntity<URI> deleteAccount(@PathVariable String iban) {
+        accountCrudService.delete(iban);
+        return ResponseEntity.ok().build();
+    }
+
+    private URI getUriToAccount(String iban) {
+
+        return ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path(IBAN_END_POINT)
+                .buildAndExpand(iban).toUri();
     }
 
 }

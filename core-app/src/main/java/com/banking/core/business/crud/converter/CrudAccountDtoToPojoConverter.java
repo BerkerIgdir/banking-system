@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-public class CrudAccountDtoToPojoConverter implements Converter<AccountCrudDTO.AccountCrudRequestDto, Account> {
+public class CrudAccountDtoToPojoConverter implements Converter<AccountCrudDTO.AccountCreateRequestDto, Account> {
     private final IbanGenerator ibanGenerator;
     public CrudAccountDtoToPojoConverter(IbanGenerator ibanGenerator) {
         this.ibanGenerator = ibanGenerator;
@@ -20,12 +20,12 @@ public class CrudAccountDtoToPojoConverter implements Converter<AccountCrudDTO.A
 
     @NonNull
     @Override
-    public Account convert(@NonNull AccountCrudDTO.AccountCrudRequestDto source) {
+    public Account convert(@NonNull AccountCrudDTO.AccountCreateRequestDto source) {
         Objects.requireNonNull(source);
         return new Account(UUID.randomUUID(),
                 source.name(),
                 source.surname(),
-                ibanGenerator.generate(source.country()).toFormattedString(),
+                ibanGenerator.generate(source.country()).toString(),
                 source.country(),
                 BigDecimal.ZERO);
     }

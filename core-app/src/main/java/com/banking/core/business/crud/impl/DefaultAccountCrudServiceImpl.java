@@ -14,17 +14,19 @@ import java.util.Optional;
 @Service
 public class DefaultAccountCrudServiceImpl implements AccountCrudService {
     private final AccountRepository accountRepository;
-    private final Converter<AccountCrudDTO.AccountCrudRequestDto, Account> accountCreateRequestDtoAccountConverter;
+    private final Converter<AccountCrudDTO.AccountCreateRequestDto, Account> accountCreateRequestDtoAccountConverter;
+    private final Converter<AccountCrudDTO.AccountUpdateRequestDto, Account> updateRequestDtoAccountConverter;
 
     public DefaultAccountCrudServiceImpl(AccountRepository accountRepository,
-                                         Converter<AccountCrudDTO.AccountCrudRequestDto, Account> accountCreateRequestDtoAccountConverter) {
+                                         Converter<AccountCrudDTO.AccountCreateRequestDto, Account> accountCreateRequestDtoAccountConverter, Converter<AccountCrudDTO.AccountUpdateRequestDto, Account> updateRequestDtoAccountConverter) {
         this.accountRepository = accountRepository;
         this.accountCreateRequestDtoAccountConverter = accountCreateRequestDtoAccountConverter;
+        this.updateRequestDtoAccountConverter = updateRequestDtoAccountConverter;
     }
 
     @Override
-    public String create(AccountCrudDTO.AccountCrudRequestDto accountCrudRequestDto) {
-       return Optional.ofNullable(accountCrudRequestDto)
+    public String create(AccountCrudDTO.AccountCreateRequestDto accountCrudRequestDto) {
+        return Optional.ofNullable(accountCrudRequestDto)
                 .map(accountCreateRequestDtoAccountConverter::convert)
                 .map(accountRepository::save)
                 .map(Account::getIBAN)
@@ -42,13 +44,20 @@ public class DefaultAccountCrudServiceImpl implements AccountCrudService {
     }
 
     @Override
-    public void update(AccountCrudDTO.AccountCrudRequestDto accountCrudRequestDto) {
+    public String update(AccountCrudDTO.AccountUpdateRequestDto accountUpdateRequestDto) {
+        var oldPojo = accountRepository.findAccountByIBAN(accountUpdateRequestDto.iban()).orElseThrow(AccountNotFoundException::new);
+        return updatePojo(oldPojo, accountUpdateRequestDto);
+    }
 
+    private String updatePojo(Account oldPojo,AccountCrudDTO.AccountUpdateRequestDto accountUpdateRequestDto) {
+        var updatedPojo = updateRequestDtoAccountConverter.convert(accountUpdateRequestDto);
+        return accountRepository.save(updatedPojo).getIBAN();
     }
 
     @Override
-    public void delete(AccountCrudDTO.AccountCrudRequestDto accountCrudRequestDto) {
-
+    public void delete(String iban) {
+        var pojoToDelete = accountRepository.findAccountByIBAN(iban).orElseThrow(AccountNotFoundException::new);
+        accountRepository.delete(pojoToDelete);
     }
 
 
