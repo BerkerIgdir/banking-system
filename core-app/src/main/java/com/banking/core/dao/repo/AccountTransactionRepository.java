@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface AccountTransactionRepository<T extends Account> extends AccountRepository {
@@ -24,5 +25,5 @@ public interface AccountTransactionRepository<T extends Account> extends Account
         """,
             nativeQuery = true)
     @Modifying
-    void addBalance(@Param("iban") String iban, @Param("cents") long cents);
+    void addBalance(@Param("iban") String iban, @Param("cents") BigDecimal cents);
 }

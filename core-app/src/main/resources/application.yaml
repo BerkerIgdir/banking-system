@@ -33,14 +33,4 @@ retry-config:
   maxAttempts: 5
   sleep-time-ms: 2000
 
-value-map:
-  rectifier-map:
-    TR:
-      - TR
-      - TUR
-      - Turkey
-      - Turkiye
-    DE:
-      - DE
-      - Germany
-      - Deutschland
+exchange-api-key: ${currency-api-key}

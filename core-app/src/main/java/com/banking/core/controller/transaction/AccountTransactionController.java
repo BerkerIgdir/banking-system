@@ -1,14 +1,15 @@
 package com.banking.core.controller.transaction;
 
-import com.banking.core.business.transaction.TransactionService;
+import com.banking.core.business.transaction.impl.services.api.TransactionService;
 import com.banking.core.dao.entity.Account;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -19,7 +20,8 @@ import java.util.List;
 @RequestMapping(value = "/transaction")
 public class AccountTransactionController {
 
-    @Resource(name = "default-transaction-service")
+    @Autowired
+    @Qualifier(value ="default-transaction-service")
     private TransactionService transactionService;
 
     @GetMapping("/transfer")

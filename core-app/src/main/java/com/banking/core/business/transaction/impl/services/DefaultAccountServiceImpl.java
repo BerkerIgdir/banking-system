@@ -1,9 +1,13 @@
 package com.banking.core.business.transaction.impl.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
-import com.banking.core.business.transaction.TransactionService;
+import com.banking.core.business.transaction.impl.services.api.AbstractTransactionService;
+import com.banking.core.business.transaction.impl.services.api.TransactionService;
+import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
+import com.banking.core.business.transaction.enums.Currency;
 import com.banking.core.dao.entity.Account;
 import com.banking.core.dao.entity.Transaction;
+import com.banking.core.dao.projection.AccountProjection;
 import com.banking.core.dao.repo.AccountTransactionRepository;
 import com.banking.core.dao.repo.TransactionsRepo;
 import org.slf4j.Logger;
@@ -17,55 +21,53 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Qualifier(value = "default-transaction-service")
 @Transactional(readOnly = true)
-public class DefaultAccountServiceImpl implements TransactionService {
+public class DefaultAccountServiceImpl extends AbstractTransactionService {
 
     private final static Logger LOG = LoggerFactory.getLogger(DefaultAccountServiceImpl.class);
-    private final AccountTransactionRepository<Account> accountRepository;
-    private final TransactionsRepo transactionsRepo;
 
-    public DefaultAccountServiceImpl( AccountTransactionRepository<Account> repository, TransactionsRepo transactionsRepo) {
-        this.accountRepository = repository;
-        this.transactionsRepo = transactionsRepo;
+    public DefaultAccountServiceImpl(AccountTransactionRepository<Account> repository, TransactionsRepo transactionsRepo, CurrencyExchangeRatioApi<BigDecimal> currencyExchangeRatioApiBigDecimal) {
+        super(repository,transactionsRepo,currencyExchangeRatioApiBigDecimal);
     }
 
-    @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) {
-        var fromAcc = accountRepository.findAccountByIBAN(fromIBAN).orElseThrow(AccountNotFoundException::new);
-        var toAcc = accountRepository.findAccountByIBAN(toIBAN).orElseThrow(AccountNotFoundException::new);
 
-        LOG.info("Beginning balance of from account is: " + fromAcc.getBalance());
-        LOG.info("Beginning balance of to account is: " + toAcc.getBalance());
 
-        if (fromAcc.getBalance().compareTo(amount) < 0) {
-            throw new IllegalArgumentException(Thread.currentThread().getName() + " NOT ENOUGH BALANCE!");
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void beginTransaction(String fromIban, String toIban, BigDecimal cents) {
+        var fromAccProjectionFuture = findByIbanAsync(fromIban);
+        var toAccProjectionFuture = findByIbanAsync(toIban);
+
+        var fromAccProjection = fromAccProjectionFuture.join();
+        var toAccProjection = toAccProjectionFuture.join();
+
+        var fromCurrency = Currency.getCurrencyOutOfSymbol(fromAccProjection.getCurrency());
+        var toCurrency = Currency.getCurrencyOutOfSymbol(toAccProjection.getCurrency());
+        var amount = currencyExchangeRatioApi.getExchangeRatio(fromCurrency, toCurrency, cents);
+
+        LOG.info("Beginning balance of from account is: " + fromAccProjection.getBalance());
+
+        if (fromAccProjection.getBalance().compareTo(amount) >= 0) {
+            accountRepository.addBalance(
+                    fromIban, amount.negate()
+            );
+
+            accountRepository.addBalance(
+                    toIban, amount
+            );
         }
-
-        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
-        toAcc.setBalance(toAcc.getBalance().add(amount));
-        var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromAcc.getUuid(), toAcc.getUuid(), amount, fromAcc.getCountry());
+        var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromIban, toIban, cents);
         transactionsRepo.save(transactionToPersist);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void beginTransaction(
-            String fromIban, String toIban, long cents) {
-
-        long fromBalance = accountRepository.getBalance(fromIban);
-        LOG.info("Beginning balance of from account is: " + fromBalance);
-
-        if (fromBalance >= cents) {
-            accountRepository.addBalance(
-                    fromIban, (-1) * cents
-            );
-
-            accountRepository.addBalance(
-                    toIban, cents
-            );
-        }
+    private CompletableFuture<AccountProjection> findByIbanAsync(String iban) {
+        return CompletableFuture.supplyAsync(() -> accountRepository.readAccountByIban(iban))
+                .thenApplyAsync(accountProjection -> accountProjection.orElseThrow(AccountNotFoundException::new))
+                .exceptionally(throwable -> {
+                    throw new RuntimeException(throwable);
+                });
     }
 }

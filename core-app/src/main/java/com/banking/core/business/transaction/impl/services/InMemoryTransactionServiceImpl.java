@@ -1,6 +1,6 @@
 package com.banking.core.business.transaction.impl.services;
 
-import com.banking.core.business.transaction.TransactionService;
+import com.banking.core.business.transaction.impl.services.api.TransactionService;
 
 import java.math.BigDecimal;
 

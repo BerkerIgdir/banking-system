@@ -1,7 +1,7 @@
 package com.banking.core.business.transaction.impl.facades;
 
 import com.banking.core.business.exception.MaxTransactionsAttemptException;
-import com.banking.core.business.transaction.TransactionService;
+import com.banking.core.business.transaction.impl.services.api.TransactionService;
 import com.banking.core.config.RetryConfigProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class RetryableAccountFacade implements TransactionService {
 
     public RetryableAccountFacade(RetryTemplate retryTemplate,
                                   RetryConfigProperties retryConfigProperties,
-                                  @Qualifier(value = "default-transaction-service") TransactionService transactionService) {
+                                  @Qualifier(value = "jpa-transaction-impl") TransactionService transactionService) {
         this.retryTemplate = retryTemplate;
         this.retryConfigProperties = retryConfigProperties;
         this.transactionService = transactionService;

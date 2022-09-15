@@ -1,7 +1,5 @@
 package com.banking.core.dao.entity;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,12 +13,9 @@ public class Transaction {
     @Column(name = "trans_time")
     private LocalDateTime time;
     @Column(name = "from_account")
-    private UUID fromAccount;
+    private String fromAccount;
     @Column(name = "to_account")
-    private UUID toAccount;
-
-    @Column(name = "country_code")
-    private String countryId;
+    private String toAccount;
     private BigDecimal amount;
 
     public int getVersion() {
@@ -37,13 +32,12 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(UUID uuid, LocalDateTime time, UUID fromAccount, UUID toAccount, BigDecimal amount,String countryId) {
+    public Transaction(UUID uuid, LocalDateTime time, String fromAccount, String toAccount, BigDecimal amount) {
         this.id = uuid;
         this.time = time;
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.amount = amount;
-        this.countryId = countryId;
     }
 
     public void setId(UUID uuid) {
@@ -54,11 +48,11 @@ public class Transaction {
         this.time = time;
     }
 
-    public void setFromAccount(UUID from) {
+    public void setFromAccount(String from) {
         this.fromAccount = from;
     }
 
-    public void setToAccount(UUID to) {
+    public void setToAccount(String to) {
         this.toAccount = to;
     }
 
@@ -74,24 +68,16 @@ public class Transaction {
         return time;
     }
 
-    public UUID getFromAccount() {
+    public String getFromAccount() {
         return fromAccount;
     }
 
-    public UUID getToAccount() {
+    public String getToAccount() {
         return toAccount;
     }
 
     public BigDecimal getAmount() {
         return amount;
-    }
-
-    public String getCountryId() {
-        return countryId;
-    }
-
-    public void setCountryId(String countryId) {
-        this.countryId = countryId;
     }
 
     @Override

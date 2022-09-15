@@ -1,5 +1,6 @@
 package com.banking.core.test.transaction;
 
+import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
 import com.banking.core.business.transaction.impl.services.DefaultAccountServiceImpl;
 import com.banking.core.business.transaction.impl.facades.RetryableAccountFacade;
 import com.banking.core.dao.entity.Account;
@@ -35,7 +36,7 @@ class TransactionTest {
         var beginningFromBalance = getBalance(FROM_IBAN);
         var beginningToBalance = getBalance(TO_IBAN);
 
-        multiThreadedTransaction(runnableCheckedExceptionSuppress(() -> service.beginTransaction(FROM_IBAN, TO_IBAN, TRANSACTION_AMOUNT)));
+        multiThreadedTransaction(runnableCheckedExceptionSuppress(() -> service.beginTransaction(FROM_IBAN, TO_IBAN, BigDecimal.valueOf(TRANSACTION_AMOUNT))));
 
         Assertions.assertEquals(getBalance(FROM_IBAN).longValue(), beginningFromBalance.longValue() - TRANSACTION_AMOUNT);
         Assertions.assertEquals(getBalance(TO_IBAN).longValue(), beginningToBalance.longValue() + TRANSACTION_AMOUNT);
