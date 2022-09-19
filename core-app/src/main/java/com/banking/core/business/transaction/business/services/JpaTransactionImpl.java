@@ -1,6 +1,7 @@
 package com.banking.core.business.transaction.business.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
+import com.banking.core.business.transaction.business.services.api.TransactionService;
 import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
 import com.banking.core.business.transaction.business.services.api.AbstractTransactionService;
 import com.banking.core.dao.entity.Account;
@@ -34,7 +35,7 @@ public class JpaTransactionImpl extends AbstractTransactionService {
 
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) {
+    public Transaction beginTransaction(String fromIBAN, String toIBAN, BigDecimal amount) {
         var fromAcc = accountRepository.findAccountByIBAN(fromIBAN).orElseThrow(AccountNotFoundException::new);
         var toAcc = accountRepository.findAccountByIBAN(toIBAN).orElseThrow(AccountNotFoundException::new);
 
@@ -48,6 +49,6 @@ public class JpaTransactionImpl extends AbstractTransactionService {
         fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
         toAcc.setBalance(toAcc.getBalance().add(amount));
         var transactionToPersist = new Transaction(UUID.randomUUID(), Instant.now().toEpochMilli(), fromAcc.getIBAN(), toAcc.getIBAN(), amount);
-        transactionsRepo.save(transactionToPersist);
+        return transactionsRepo.save(transactionToPersist);
     }
 }

@@ -35,7 +35,7 @@ public class DefaultAccountServiceImpl extends AbstractTransactionService {
 
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void beginTransaction(String fromIban, String toIban, BigDecimal cents) {
+    public Transaction beginTransaction(String fromIban, String toIban, BigDecimal cents) {
         var fromAccProjectionFuture = findByIbanAsync(fromIban);
         var toAccProjectionFuture = findByIbanAsync(toIban);
 
@@ -53,7 +53,7 @@ public class DefaultAccountServiceImpl extends AbstractTransactionService {
             accountRepository.addBalance(toIban, amount);
         }
         var transactionToPersist = new Transaction(UUID.randomUUID(), Instant.now().toEpochMilli(), fromIban, toIban, cents);
-        transactionsRepo.save(transactionToPersist);
+        return transactionsRepo.save(transactionToPersist);
     }
 
     private CompletableFuture<AccountProjection> findByIbanAsync(String iban) {

@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public interface AccountTransactionRepository<T extends Account> extends AccountRepository {
+public interface  AccountTransactionRepository<T extends Account> extends AccountRepository {
 
     @Query(value = """
         SELECT balance

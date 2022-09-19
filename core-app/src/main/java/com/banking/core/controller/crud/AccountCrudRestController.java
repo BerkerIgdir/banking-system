@@ -2,6 +2,7 @@ package com.banking.core.controller.crud;
 
 import com.banking.core.business.crud.AccountCrudService;
 import com.banking.core.business.crud.dto.AccountCrudDTO;
+import com.banking.core.controller.util.ControllerUtilMethods;
 import com.banking.core.dao.entity.Account;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class AccountCrudRestController {
             notes = "This method creates a new user")
     public ResponseEntity<URI> createNewAccount(@RequestBody @Valid AccountCrudDTO.AccountCreateRequestDto requestDto) {
         var iban = accountCrudService.create(requestDto);
-        return ResponseEntity.created(getUriToAccount(iban)).build();
+        return ResponseEntity.created(ControllerUtilMethods.createUriToAnEntity(iban, IBAN_END_POINT)).build();
     }
 
     @PutMapping
@@ -52,7 +53,7 @@ public class AccountCrudRestController {
             notes = "This method updates an existing user")
     public ResponseEntity<URI> updateAccount(@RequestBody @Valid AccountCrudDTO.AccountUpdateRequestDto requestDto) {
         var iban = accountCrudService.update(requestDto);
-        return ResponseEntity.created(getUriToAccount(iban)).build();
+        return ResponseEntity.created(ControllerUtilMethods.createUriToAnEntity(iban, IBAN_END_POINT)).build();
     }
 
     @DeleteMapping(IBAN_END_POINT)
@@ -61,13 +62,6 @@ public class AccountCrudRestController {
     public ResponseEntity<URI> deleteAccount(@PathVariable String iban) {
         accountCrudService.delete(iban);
         return ResponseEntity.ok().build();
-    }
-
-    private URI getUriToAccount(String iban) {
-
-        return ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path(IBAN_END_POINT)
-                .buildAndExpand(iban).toUri();
     }
 
 }
