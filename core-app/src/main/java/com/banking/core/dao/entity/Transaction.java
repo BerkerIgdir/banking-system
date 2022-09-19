@@ -11,7 +11,7 @@ public class Transaction {
     @Id
     private UUID id;
     @Column(name = "trans_time")
-    private LocalDateTime time;
+    private long time;
     @Column(name = "from_account")
     private String fromAccount;
     @Column(name = "to_account")
@@ -32,7 +32,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(UUID uuid, LocalDateTime time, String fromAccount, String toAccount, BigDecimal amount) {
+    public Transaction(UUID uuid, long time, String fromAccount, String toAccount, BigDecimal amount) {
         this.id = uuid;
         this.time = time;
         this.fromAccount = fromAccount;
@@ -44,7 +44,7 @@ public class Transaction {
         this.id = uuid;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -64,7 +64,7 @@ public class Transaction {
         return id;
     }
 
-    public LocalDateTime getTime() {
+    public long getTime() {
         return time;
     }
 

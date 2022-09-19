@@ -1,8 +1,8 @@
-package com.banking.core.business.transaction.impl.services;
+package com.banking.core.business.transaction.business.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
 import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
-import com.banking.core.business.transaction.impl.services.api.AbstractTransactionService;
+import com.banking.core.business.transaction.business.services.api.AbstractTransactionService;
 import com.banking.core.dao.entity.Account;
 import com.banking.core.dao.entity.Transaction;
 import com.banking.core.dao.repo.AccountTransactionRepository;
@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Service
@@ -45,7 +47,7 @@ public class JpaTransactionImpl extends AbstractTransactionService {
 
         fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
         toAcc.setBalance(toAcc.getBalance().add(amount));
-        var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromAcc.getIBAN(), toAcc.getIBAN(), amount);
+        var transactionToPersist = new Transaction(UUID.randomUUID(), Instant.now().toEpochMilli(), fromAcc.getIBAN(), toAcc.getIBAN(), amount);
         transactionsRepo.save(transactionToPersist);
     }
 }

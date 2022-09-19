@@ -21,7 +21,7 @@ CREATE TABLE public.accounts
 (
     id         uuid NOT NULL UNIQUE ,
     version integer default 0,
-    IBAN       character varying COLLATE pg_catalog."default",
+    IBAN       character varying COLLATE pg_catalog."default" NOT NULL UNIQUE,
     name       character varying COLLATE pg_catalog."default",
     surname    character varying COLLATE pg_catalog."default",
     country_code character varying COLLATE pg_catalog."default" NOT NULL,
@@ -42,19 +42,15 @@ CREATE TABLE public.transactions
 (
     id uuid NOT NULL UNIQUE,
     version integer default 0,
-    to_account     uuid NOT NULL,
-    from_account   uuid NOT NULL,
-    country_code character varying COLLATE pg_catalog."default" NOT NULL,
+    to_account     character varying COLLATE pg_catalog."default" NOT NULL,
+    from_account   character varying COLLATE pg_catalog."default" NOT NULL,
     amount NUMERIC(12, 4),
-    trans_time TIMESTAMP,
+    trans_time NUMERIC(12,4),
     CONSTRAINT transactions_pk PRIMARY KEY (id),
     CONSTRAINT account_to_fk FOREIGN KEY (to_account)
-        REFERENCES public.accounts (id),
-
+        REFERENCES public.accounts (IBAN),
     CONSTRAINT account_from_fk FOREIGN KEY (from_account)
-        REFERENCES public.accounts (id),
-    CONSTRAINT country_fk  FOREIGN KEY (country_code)
-        REFERENCES public.countries (code)
+        REFERENCES public.accounts (IBAN)
 ) TABLESPACE pg_default;
 
 ALTER TABLE public.transactions

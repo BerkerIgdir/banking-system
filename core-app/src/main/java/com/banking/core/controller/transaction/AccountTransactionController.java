@@ -1,7 +1,7 @@
 package com.banking.core.controller.transaction;
 
-import com.banking.core.business.transaction.impl.services.api.TransactionService;
-import com.banking.core.dao.entity.Account;
+import com.banking.core.business.transaction.business.services.api.TransactionService;
+import com.banking.core.controller.transaction.dto.TransactionApiDto;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,27 +10,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.List;
-
+import javax.servlet.http.HttpServletRequest;
 @Validated
 @RestController
 @RequestMapping(value = "/transaction")
 public class AccountTransactionController {
 
     @Autowired
-    @Qualifier(value ="default-transaction-service")
+    @Qualifier(value = "default-transaction-service")
     private TransactionService transactionService;
 
-    @GetMapping("/transfer")
+    @PostMapping("/transfer")
     @ApiOperation(value = "Executes money transfer",
             notes = "This endpoint executes money transaction between two accounts identified by IBAN")
-    ResponseEntity<List<Account>> getAllAccounts(@RequestParam("from") @NotEmpty @NotNull String fromIban,
-                                                 @RequestParam("to") @NotEmpty @NotNull String toIban,
-                                                 @RequestParam("amount") @NotEmpty @NotNull BigDecimal amount) throws InterruptedException {
-        transactionService.beginTransaction(fromIban, toIban, amount);
+    ResponseEntity<Void> executeTransaction(HttpServletRequest request, @RequestBody TransactionApiDto.TransactionRequestDto requestDto) throws InterruptedException {
+        transactionService.beginTransaction(requestDto.fromIban(), requestDto.toIban(), requestDto.amount());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

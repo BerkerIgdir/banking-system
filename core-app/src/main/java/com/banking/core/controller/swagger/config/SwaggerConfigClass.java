@@ -13,7 +13,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
-@Profile("!test")
 @Configuration
 @EnableSwagger2
 public class SwaggerConfigClass {
@@ -25,6 +24,7 @@ public class SwaggerConfigClass {
                 .paths(PathSelectors.any())
                 .build().apiInfo(apiEndPointsInfo());
     }
+
     private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("Spring Boot Swagger Examples")
                 .description("User Api Documentation")

@@ -1,8 +1,7 @@
-package com.banking.core.business.transaction.impl.services;
+package com.banking.core.business.transaction.business.services;
 
 import com.banking.core.business.exception.AccountNotFoundException;
-import com.banking.core.business.transaction.impl.services.api.AbstractTransactionService;
-import com.banking.core.business.transaction.impl.services.api.TransactionService;
+import com.banking.core.business.transaction.business.services.api.AbstractTransactionService;
 import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
 import com.banking.core.business.transaction.enums.Currency;
 import com.banking.core.dao.entity.Account;
@@ -19,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,9 +30,8 @@ public class DefaultAccountServiceImpl extends AbstractTransactionService {
     private final static Logger LOG = LoggerFactory.getLogger(DefaultAccountServiceImpl.class);
 
     public DefaultAccountServiceImpl(AccountTransactionRepository<Account> repository, TransactionsRepo transactionsRepo, CurrencyExchangeRatioApi<BigDecimal> currencyExchangeRatioApiBigDecimal) {
-        super(repository,transactionsRepo,currencyExchangeRatioApiBigDecimal);
+        super(repository, transactionsRepo, currencyExchangeRatioApiBigDecimal);
     }
-
 
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -51,15 +49,10 @@ public class DefaultAccountServiceImpl extends AbstractTransactionService {
         LOG.info("Beginning balance of from account is: " + fromAccProjection.getBalance());
 
         if (fromAccProjection.getBalance().compareTo(amount) >= 0) {
-            accountRepository.addBalance(
-                    fromIban, amount.negate()
-            );
-
-            accountRepository.addBalance(
-                    toIban, amount
-            );
+            accountRepository.addBalance(fromIban, amount.negate());
+            accountRepository.addBalance(toIban, amount);
         }
-        var transactionToPersist = new Transaction(UUID.randomUUID(), LocalDateTime.now(), fromIban, toIban, cents);
+        var transactionToPersist = new Transaction(UUID.randomUUID(), Instant.now().toEpochMilli(), fromIban, toIban, cents);
         transactionsRepo.save(transactionToPersist);
     }
 

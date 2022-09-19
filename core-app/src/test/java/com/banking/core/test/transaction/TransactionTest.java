@@ -1,8 +1,7 @@
 package com.banking.core.test.transaction;
 
-import com.banking.core.business.transaction.currency_exchange_api.CurrencyExchangeRatioApi;
-import com.banking.core.business.transaction.impl.services.DefaultAccountServiceImpl;
-import com.banking.core.business.transaction.impl.facades.RetryableAccountFacade;
+import com.banking.core.business.transaction.business.services.DefaultAccountServiceImpl;
+import com.banking.core.business.transaction.business.facades.RetryableAccountFacade;
 import com.banking.core.dao.entity.Account;
 
 import com.banking.core.dao.repo.AccountRepository;
@@ -14,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 @SpringBootTest
 class TransactionTest {

@@ -1,6 +1,4 @@
-package com.banking.core.business.transaction.impl.services.api;
-
-import com.banking.core.dao.entity.Account;
+package com.banking.core.business.transaction.business.services.api;
 
 import java.math.BigDecimal;
 
