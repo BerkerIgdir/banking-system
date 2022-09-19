@@ -3,6 +3,7 @@ package com.banking.core.controller.transaction;
 import com.banking.core.business.transaction.business.facades.RetryableAccountFacade;
 import com.banking.core.controller.transaction.dto.TransactionApiDto;
 import com.banking.core.controller.util.ControllerUtilMethods;
+import com.banking.core.dao.entity.Transaction;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 @Validated
 @RestController
@@ -26,10 +29,17 @@ public class AccountTransactionController {
     @GetMapping
     @ApiOperation(value = "Gets a transaction",
             notes = "This fetches a specific transaction by id")
-    ResponseEntity<URI> getTransactionDetail(@RequestParam("transaction-id") String transactionId) {
+    ResponseEntity<Transaction> getTransactionDetail(@RequestParam("transaction-id") String transactionId) {
+        var transaction = retryableAccountFacade.getTransactionService().getTransaction(UUID.fromString(transactionId));
+        return ResponseEntity.ok().body(transaction);
+    }
 
-        var uri = ControllerUtilMethods.createUriToAnEntity(transactionId, "/transaction");
-        return ResponseEntity.created(uri).build();
+    @GetMapping
+    @ApiOperation(value = "Gets all transactions between two accounts",
+            notes = "This fetches all transactions between two accounts")
+    ResponseEntity<List<Transaction>> getTransactionDetail(@RequestParam("from-iban") String fromIban, @RequestParam("to-iban") String toIban) {
+        var transactions = retryableAccountFacade.getTransactionService().getTransactions(fromIban,toIban);
+        return ResponseEntity.ok().body(transactions);
     }
 
     @PostMapping("/transfer")

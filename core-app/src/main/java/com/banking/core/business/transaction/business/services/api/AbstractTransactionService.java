@@ -8,6 +8,7 @@ import com.banking.core.dao.repo.TransactionsRepo;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public abstract class AbstractTransactionService implements TransactionService {
@@ -26,7 +27,7 @@ public abstract class AbstractTransactionService implements TransactionService {
 
     @Override
     public Transaction getTransaction(UUID uuid) {
-        return transactionsRepo.getReferenceById(uuid);
+        return Optional.ofNullable(transactionsRepo.getReferenceById(uuid)).orElseThrow(RuntimeException::new);
     }
 
     @Override

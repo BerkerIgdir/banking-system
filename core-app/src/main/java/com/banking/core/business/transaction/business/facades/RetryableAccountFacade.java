@@ -40,7 +40,7 @@ public class RetryableAccountFacade {
         while (true) {
             var optionalTransaction = retryTemplate.execute(retryContext -> retryTransaction(retryContext, fromIBAN, toIBAN, amount));
 
-            if(optionalTransaction.isPresent()){
+            if (optionalTransaction.isPresent()) {
                 return optionalTransaction.get();
             }
 
@@ -62,5 +62,9 @@ public class RetryableAccountFacade {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    public TransactionService getTransactionService() {
+        return transactionService;
     }
 }
