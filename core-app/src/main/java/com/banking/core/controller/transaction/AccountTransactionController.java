@@ -23,7 +23,6 @@ import java.util.UUID;
 public class AccountTransactionController {
 
     @Autowired
-    @Qualifier(value = "default-transaction-service")
     private RetryableAccountFacade retryableAccountFacade;
 
     @GetMapping

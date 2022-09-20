@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  core-banking-service:
+    image: ${GROUP_ID}/app:${SERVICE_VERSION:-latest}
+    depends_on:
+      - postgres
+    volumes:
+      - ./docker-logs:/workspace/core-app/logs
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_TWITTER=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/bank?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true"
+      - "SPRING_DATASOURCE_USERNAME=postgres"
+      - "SPRING_DATASOURCE_SCHEMA=public"
+      - "SPRING_DATASOURCE_PASSWORD=admin"
+      - "CURRENCY_API_KEY=${CURRENCY_API_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
