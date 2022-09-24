@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   core-banking-service:
-    image: ${GROUP_ID}/app:${SERVICE_VERSION:-latest}
+    image: core-app/version-0.0.1
     depends_on:
       - postgres
     volumes:

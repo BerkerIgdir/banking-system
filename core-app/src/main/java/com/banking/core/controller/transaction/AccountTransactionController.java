@@ -6,8 +6,6 @@ import com.banking.core.controller.util.ControllerUtilMethods;
 import com.banking.core.dao.entity.Transaction;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +31,7 @@ public class AccountTransactionController {
         return ResponseEntity.ok().body(transaction);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     @ApiOperation(value = "Gets all transactions between two accounts",
             notes = "This fetches all transactions between two accounts")
     ResponseEntity<List<Transaction>> getTransactionDetail(@RequestParam("from-iban") String fromIban, @RequestParam("to-iban") String toIban) {

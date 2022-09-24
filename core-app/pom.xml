@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>BankingSystem</artifactId>
-        <groupId>berker.banking</groupId>
+        <groupId>org.example</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,8 +12,8 @@
     <artifactId>core-app</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -76,15 +76,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <image>
-                        <name>${project.groupId}/app:${project.version}</name>
-                    </image>
+                    <!--                    <image>-->
+                    <!--                        <name>${project.groupId}/app:${project.version}</name>-->
+                    <!--                    </image>-->
+                    <mainClass>
+                        com.banking.core.BankingCoreApp
+                    </mainClass>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>install</phase>
                         <goals>
-                            <goal>build-image</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
